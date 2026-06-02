@@ -2,6 +2,8 @@
 
 一个面向社会科学质性研究的轻量 MVP，帮助研究者把访谈、开放题或田野材料整理为可复核的编码表、主题结构、方法段草稿和 LLM 复核提示词。
 
+在线试用：<https://yklbigdata.github.io/qual-method-assistant/>
+
 ## 功能
 
 - 导入 TXT、CSV 或项目 JSON

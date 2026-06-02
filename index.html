@@ -1,0 +1,1632 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>社科质性研究 AI 方法助手</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23276f61'/%3E%3Cpath d='M18 18h28M18 28h28M18 38h18M18 48h24' stroke='white' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f4;
+      --panel: #ffffff;
+      --panel-soft: #f1f5ef;
+      --ink: #20231f;
+      --muted: #687066;
+      --line: #d9dfd3;
+      --accent: #276f61;
+      --accent-2: #9b5c2e;
+      --accent-3: #345f96;
+      --warn: #b14b3f;
+      --shadow: 0 8px 28px rgba(40, 45, 36, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+      letter-spacing: 0;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      border-radius: 6px;
+      min-height: 36px;
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: #adb8a8;
+      background: #fbfcfa;
+    }
+
+    button.primary {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+
+    button.subtle {
+      background: #f7faf5;
+      color: var(--muted);
+    }
+
+    button.icon {
+      width: 36px;
+      padding: 0;
+      display: inline-grid;
+      place-items: center;
+      font-weight: 700;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 288px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--line);
+      background: #fbfcfa;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 14px;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      background:
+        linear-gradient(135deg, rgba(39,111,97,.92), rgba(39,111,97,.12)),
+        repeating-linear-gradient(0deg, transparent 0 7px, rgba(255,255,255,.7) 7px 8px);
+      border: 1px solid rgba(39,111,97,.24);
+      flex: 0 0 auto;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.2;
+      font-weight: 720;
+    }
+
+    .brand p {
+      margin: 2px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      border-radius: 6px;
+      padding: 10px;
+      outline: none;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(39,111,97,.12);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 124px;
+      line-height: 1.45;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel-soft);
+    }
+
+    .segmented button {
+      border: 0;
+      min-height: 32px;
+      padding: 0 8px;
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .segmented button.active {
+      background: var(--panel);
+      color: var(--accent);
+      box-shadow: 0 1px 3px rgba(20,20,20,.10);
+      font-weight: 700;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar button {
+      white-space: nowrap;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .status {
+      min-height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 10px;
+      background: #f7faf5;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .status.active {
+      border-color: rgba(39,111,97,.32);
+      color: var(--accent);
+      background: #eef6f2;
+    }
+
+    .main {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      min-width: 0;
+    }
+
+    .topbar {
+      min-height: 62px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.82);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 4;
+    }
+
+    .topbar-title {
+      min-width: 0;
+    }
+
+    .topbar-title h2 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    .topbar-title p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .content {
+      padding: 18px 20px 28px;
+      display: grid;
+      grid-template-columns: minmax(340px, 0.9fr) minmax(420px, 1.1fr);
+      gap: 16px;
+      align-items: start;
+      min-width: 0;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+
+    .panel-header {
+      min-height: 50px;
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-header h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 760;
+    }
+
+    .panel-body {
+      padding: 14px;
+    }
+
+    .text-input {
+      min-height: 520px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      background: #fbfcfa;
+      border-radius: 6px;
+      padding: 9px;
+      min-height: 62px;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 20px;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .method-box {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid rgba(39,111,97,.24);
+      background: #eef6f2;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .method-box h4 {
+      margin: 0 0 4px;
+      font-size: 14px;
+    }
+
+    .method-box p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.42;
+      font-size: 13px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 26px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: #e6ece3;
+      color: #3d473a;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid var(--line);
+      padding: 0 14px;
+      overflow-x: auto;
+    }
+
+    .tabs button {
+      border: 0;
+      border-radius: 0;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      padding: 0 10px;
+      min-height: 42px;
+      white-space: nowrap;
+    }
+
+    .tabs button.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      font-weight: 700;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 13px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px;
+      vertical-align: top;
+      text-align: left;
+      line-height: 1.38;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      background: #fbfcfa;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    td textarea {
+      min-height: 72px;
+      font-size: 12px;
+      padding: 8px;
+      line-height: 1.36;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      max-height: 520px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .theme {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fbfcfa;
+      min-height: 122px;
+    }
+
+    .theme h4 {
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+
+    .theme ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 13px;
+    }
+
+    .draft {
+      white-space: pre-wrap;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 13px;
+      background: #fbfcfa;
+      line-height: 1.6;
+      min-height: 220px;
+      font-size: 14px;
+    }
+
+    .risk-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .risk {
+      border-left: 3px solid var(--warn);
+      background: #fff8f5;
+      padding: 10px 12px;
+      border-radius: 6px;
+      line-height: 1.45;
+      font-size: 13px;
+    }
+
+    .checkline {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .checkline input {
+      width: auto;
+      margin: 0;
+    }
+
+    .memo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .memo-grid textarea {
+      min-height: 240px;
+    }
+
+    .section-tools {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .section-tools p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .audit-list {
+      display: grid;
+      gap: 8px;
+      max-height: 520px;
+      overflow: auto;
+    }
+
+    .audit-item {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px;
+      background: #fbfcfa;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .audit-item b {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .audit-change {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+      color: var(--muted);
+    }
+
+    .audit-change span {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px;
+      background: #fff;
+      min-height: 42px;
+      white-space: pre-wrap;
+    }
+
+    .prompt-box {
+      min-height: 360px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.55;
+      background: #fbfcfa;
+    }
+
+    .empty {
+      color: var(--muted);
+      padding: 32px 14px;
+      text-align: center;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      background: #fbfcfa;
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      .text-input {
+        min-height: 360px;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .toolbar {
+        width: 100%;
+      }
+
+      .toolbar button {
+        flex: 1;
+      }
+
+      .stats,
+      .theme-grid,
+      .memo-grid,
+      .audit-change {
+        grid-template-columns: 1fr;
+      }
+
+      .content {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div>
+          <h1>质性方法助手</h1>
+          <p>主题分析 · 扎根理论 · 证据链</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="project">项目</label>
+        <input id="project" value="生成式 AI 态度访谈分析">
+      </div>
+
+      <div class="field">
+        <label for="question">研究问题</label>
+        <textarea id="question">用户如何理解和使用生成式 AI？他们在学术任务中遇到哪些风险、焦虑与策略？</textarea>
+      </div>
+
+      <div class="field">
+        <label for="discipline">学科语境</label>
+        <select id="discipline">
+          <option>社会学 / 教育学 / 传播学</option>
+          <option>管理学 / 信息系统</option>
+          <option>法学 / 政策研究</option>
+          <option>文学 / 历史 / 哲学</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>理论状态</label>
+        <div class="segmented" id="theoryMode">
+          <button data-mode="known" class="active">已有理论</button>
+          <button data-mode="mixed">半开放</button>
+          <button data-mode="explore">探索</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>分析路径</label>
+        <div class="segmented" id="methodMode">
+          <button data-mode="auto" class="active">自动</button>
+          <button data-mode="theme">主题</button>
+          <button data-mode="grounded">扎根</button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button class="primary" id="analyzeBtn">分析</button>
+        <button id="sampleBtn">样本</button>
+        <button id="clearBtn">清空</button>
+      </div>
+
+      <div class="toolbar">
+        <button id="importBtn">导入 TXT/CSV</button>
+        <button id="saveProjectBtn">保存项目</button>
+        <button id="loadProjectBtn">载入项目</button>
+      </div>
+      <input class="file-input" id="importFile" type="file" accept=".txt,.csv,.json,text/plain,text/csv,application/json">
+      <div class="status" id="statusLine">本地自动保存已开启</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-title">
+          <h2 id="screenTitle">编码工作台</h2>
+          <p id="screenMeta">等待分析</p>
+        </div>
+        <div class="toolbar">
+          <button id="exportCsvBtn">导出 CSV</button>
+          <button id="exportJsonBtn">导出 JSON</button>
+          <button id="exportDocBtn">导出 DOC</button>
+          <button id="copyDraftBtn">复制方法段</button>
+        </div>
+      </header>
+
+      <section class="content">
+        <section class="panel">
+          <div class="panel-header">
+            <h3>材料</h3>
+            <span class="pill" id="unitHint">0 个片段</span>
+          </div>
+          <div class="panel-body">
+            <textarea class="text-input" id="sourceText"></textarea>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h3>分析</h3>
+            <div class="toolbar">
+              <button class="icon" id="recodeBtn" title="重新编码">↻</button>
+            </div>
+          </div>
+          <div class="tabs">
+            <button data-tab="overview" class="active">概览</button>
+            <button data-tab="coding">编码表</button>
+            <button data-tab="themes">主题</button>
+            <button data-tab="draft">方法段</button>
+            <button data-tab="risks">复核</button>
+            <button data-tab="memos">备忘录</button>
+            <button data-tab="audit">审计</button>
+            <button data-tab="llm">LLM</button>
+          </div>
+          <div class="panel-body">
+            <div id="overview" class="tab-panel active">
+              <div class="stats">
+                <div class="stat"><b id="statUnits">0</b><span>意义单元</span></div>
+                <div class="stat"><b id="statCodes">0</b><span>初始编码</span></div>
+                <div class="stat"><b id="statThemes">0</b><span>主题</span></div>
+                <div class="stat"><b id="statReview">0</b><span>需复核</span></div>
+              </div>
+              <div class="method-box">
+                <div>
+                  <h4 id="methodName">未分析</h4>
+                  <p id="methodReason">输入材料后生成方法建议。</p>
+                </div>
+                <span class="pill" id="methodBadge">Method</span>
+              </div>
+              <div class="empty" id="overviewEmpty">暂无结果</div>
+            </div>
+
+            <div id="coding" class="tab-panel">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th style="width: 32%">原文片段</th>
+                      <th style="width: 24%">初始编码</th>
+                      <th style="width: 22%">主题/范畴</th>
+                      <th style="width: 22%">方法备注</th>
+                    </tr>
+                  </thead>
+                  <tbody id="codingRows"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div id="themes" class="tab-panel">
+              <div class="theme-grid" id="themeGrid"></div>
+            </div>
+
+            <div id="draft" class="tab-panel">
+              <div class="draft" id="methodDraft">暂无方法段。</div>
+            </div>
+
+            <div id="risks" class="tab-panel">
+              <div class="risk-list" id="riskList"></div>
+            </div>
+
+            <div id="memos" class="tab-panel">
+              <div class="memo-grid">
+                <div class="field">
+                  <label for="researcherMemo">研究者备忘录</label>
+                  <textarea id="researcherMemo" placeholder="记录你对受访者语境、反例、比较对象和理论敏感概念的判断。"></textarea>
+                </div>
+                <div class="field">
+                  <label for="methodMemo">方法备忘录</label>
+                  <textarea id="methodMemo" placeholder="记录编码规则、主题合并/拆分理由、导师反馈和答辩时需要说明的边界。"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div id="audit" class="tab-panel">
+              <div class="section-tools">
+                <p>记录人工修改编码、主题和复核状态的轨迹，便于说明 AI 初稿如何被研究者修订。</p>
+                <button id="clearAuditBtn">清空审计</button>
+              </div>
+              <div class="audit-list" id="auditList"></div>
+            </div>
+
+            <div id="llm" class="tab-panel">
+              <div class="section-tools">
+                <p>复制提示词到你自己的模型或私有 API 中运行；当前 MVP 不上传材料。</p>
+                <div class="toolbar">
+                  <button id="refreshPromptBtn">刷新提示词</button>
+                  <button id="copyPromptBtn">复制提示词</button>
+                </div>
+              </div>
+              <textarea id="llmPrompt" class="prompt-box" readonly></textarea>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "qual-method-assistant-mvp-v2";
+    const FIELD_LABELS = {
+      code: "初始编码",
+      theme: "主题/范畴",
+      note: "方法备注",
+      review: "复核状态"
+    };
+
+    const sampleText = `访谈者：你平时会怎样使用生成式 AI？
+受访者 A：我会先让 AI 帮我整理文献观点，但我不敢完全相信它给的参考文献，因为之前出现过不存在的文章。
+受访者 A：真正难的是把访谈材料变成论文里的分析结构。我知道自己做了访谈，但不知道要不要编码。
+受访者 B：导师让我做主题分析，可是我看了很多硕士论文，有些只是直接引用受访者原话。
+受访者 B：我试过 NVivo，但学习成本太高。最后还是把内容放在 Excel 里手动标注，感觉灵活一些。
+受访者 C：我已经有理论框架，所以不想做完整扎根理论。我需要的是把材料和理论概念对齐。
+受访者 C：如果 AI 能把原文、初级编码、主题和论文小标题对应起来，我会比较放心。
+受访者 D：我担心答辩时老师问为什么这样编码，也担心 AI 生成的内容没有依据。
+受访者 D：最好能保留每个主题背后的原话证据，并标出哪些地方需要我自己复核。`;
+
+    const state = {
+      theoryMode: "known",
+      methodMode: "auto",
+      rows: [],
+      themes: [],
+      method: null,
+      history: [],
+      memos: {
+        researcher: "",
+        method: ""
+      }
+    };
+
+    const els = {
+      project: document.getElementById("project"),
+      question: document.getElementById("question"),
+      discipline: document.getElementById("discipline"),
+      sourceText: document.getElementById("sourceText"),
+      importFile: document.getElementById("importFile"),
+      statusLine: document.getElementById("statusLine"),
+      unitHint: document.getElementById("unitHint"),
+      screenMeta: document.getElementById("screenMeta"),
+      statUnits: document.getElementById("statUnits"),
+      statCodes: document.getElementById("statCodes"),
+      statThemes: document.getElementById("statThemes"),
+      statReview: document.getElementById("statReview"),
+      methodName: document.getElementById("methodName"),
+      methodReason: document.getElementById("methodReason"),
+      methodBadge: document.getElementById("methodBadge"),
+      overviewEmpty: document.getElementById("overviewEmpty"),
+      codingRows: document.getElementById("codingRows"),
+      themeGrid: document.getElementById("themeGrid"),
+      methodDraft: document.getElementById("methodDraft"),
+      riskList: document.getElementById("riskList"),
+      researcherMemo: document.getElementById("researcherMemo"),
+      methodMemo: document.getElementById("methodMemo"),
+      auditList: document.getElementById("auditList"),
+      llmPrompt: document.getElementById("llmPrompt")
+    };
+
+    const lexicon = [
+      {
+        theme: "文献与引用可信度",
+        codes: ["文献核验", "引用风险", "幻觉识别"],
+        words: ["文献", "参考文献", "引用", "不存在", "幻觉", "文章", "论文"]
+      },
+      {
+        theme: "方法选择与导师要求",
+        codes: ["方法不确定", "导师规范", "答辩压力"],
+        words: ["导师", "答辩", "方法", "主题分析", "扎根", "理论", "要求"]
+      },
+      {
+        theme: "编码实践与工具选择",
+        codes: ["手工编码", "软件门槛", "证据链组织"],
+        words: ["编码", "NVivo", "Excel", "标注", "原话", "片段", "主题"]
+      },
+      {
+        theme: "理论框架对齐",
+        codes: ["理论演绎", "概念匹配", "框架分析"],
+        words: ["理论框架", "概念", "对齐", "已有理论", "小标题", "结构"]
+      },
+      {
+        theme: "AI 辅助边界",
+        codes: ["人工复核", "AI 辅助", "可追溯性"],
+        words: ["AI", "复核", "依据", "放心", "生成", "保留", "证据"]
+      }
+    ];
+
+    let autoSaveTimer = null;
+    let statusTimer = null;
+
+    function splitUnits(text) {
+      return text
+        .split(/\n+/)
+        .map(x => x.trim())
+        .filter(x => x.length > 8)
+        .map(x => x.replace(/^受访者\s*[A-Z甲乙丙丁]?[：:]\s*/, "").replace(/^访谈者[：:]\s*/, ""));
+    }
+
+    function scoreUnit(unit, entry) {
+      return entry.words.reduce((score, word) => score + (unit.includes(word) ? 1 : 0), 0);
+    }
+
+    function chooseTheme(unit) {
+      const scored = lexicon.map(entry => ({ ...entry, score: scoreUnit(unit, entry) }));
+      scored.sort((a, b) => b.score - a.score);
+      const top = scored[0];
+      if (!top || top.score === 0) {
+        return {
+          theme: "开放问题与补充材料",
+          code: "待归纳片段",
+          note: "缺少明显关键词，建议人工复核。",
+          review: true
+        };
+      }
+      const code = top.codes[Math.min(top.score - 1, top.codes.length - 1)];
+      return {
+        theme: top.theme,
+        code,
+        note: top.score >= 2 ? "关键词匹配较明确，保留原文证据。" : "初步匹配，建议确认语境。",
+        review: top.score < 2
+      };
+    }
+
+    function recommendMethod(units) {
+      const text = [els.question.value, els.sourceText.value, state.memos.method].join("\n");
+      const hasKnownTheory = state.theoryMode === "known" || /已有理论|理论框架|验证|概念/.test(text);
+      const hasGrounded = /扎根|开放编码|主轴编码|选择性编码|理论饱和/.test(text);
+      const hasTheme = /主题分析|主题|访谈|开放题/.test(text);
+
+      if (state.methodMode === "theme" || (state.methodMode === "auto" && hasKnownTheory && hasTheme)) {
+        return {
+          name: "主题分析 / 框架分析",
+          badge: "Theme",
+          reason: "材料中存在既有理论或概念框架，适合将原文片段归入主题并保留证据链。"
+        };
+      }
+      if (state.methodMode === "grounded" || (state.methodMode === "auto" && hasGrounded && !hasKnownTheory)) {
+        return {
+          name: "扎根理论编码",
+          badge: "Grounded",
+          reason: "材料更偏探索性，可使用开放编码、主轴编码、选择性编码逐层归纳。"
+        };
+      }
+      return {
+        name: "快速主题归纳",
+        badge: "Rapid",
+        reason: "当前材料适合先形成可复核的主题初稿，再由研究者决定是否升级为完整方法流程。"
+      };
+    }
+
+    function analyze(options = {}) {
+      const units = splitUnits(els.sourceText.value);
+      const previousByQuote = new Map(state.rows.map(row => [row.quote, row]));
+      const rows = units.map((unit, index) => {
+        const previous = options.preserveExisting ? previousByQuote.get(unit) : null;
+        if (previous) return normalizeRow({ ...previous, id: index + 1 }, index);
+
+        const picked = chooseTheme(unit);
+        return normalizeRow({
+          id: index + 1,
+          quote: unit,
+          meaning: unit.length > 44 ? unit.slice(0, 44) + "..." : unit,
+          code: picked.code,
+          theme: picked.theme,
+          note: picked.note,
+          review: picked.review
+        }, index);
+      });
+
+      state.rows = rows;
+      state.method = rows.length ? recommendMethod(units) : null;
+      rebuildThemes();
+      render(options.tab || "overview");
+      scheduleAutoSave();
+      showStatus(rows.length ? `已生成 ${rows.length} 个意义单元` : "没有可分析的文本片段");
+    }
+
+    function render(tabId = getActiveTab()) {
+      syncMemos();
+      const reviewCount = state.rows.filter(row => row.review).length;
+      const codeCount = new Set(state.rows.map(row => row.code).filter(Boolean)).size;
+
+      els.unitHint.textContent = state.rows.length ? `${state.rows.length} 个片段` : `${splitUnits(els.sourceText.value).length} 待分析`;
+      els.screenMeta.textContent = state.method ? `${state.method.name} · ${state.rows.length} 个意义单元` : "等待分析";
+      els.statUnits.textContent = state.rows.length;
+      els.statCodes.textContent = codeCount;
+      els.statThemes.textContent = state.themes.length;
+      els.statReview.textContent = reviewCount;
+
+      if (state.method) {
+        els.methodName.textContent = state.method.name;
+        els.methodReason.textContent = state.method.reason;
+        els.methodBadge.textContent = state.method.badge;
+      } else {
+        els.methodName.textContent = "未分析";
+        els.methodReason.textContent = "输入材料后生成方法建议。";
+        els.methodBadge.textContent = "Method";
+      }
+
+      els.overviewEmpty.style.display = state.rows.length ? "none" : "block";
+      renderCodingRows();
+      renderThemes();
+      renderDerived();
+      renderAudit();
+      activateTab(tabId);
+    }
+
+    function renderCodingRows() {
+      els.codingRows.innerHTML = state.rows.map(row => `
+        <tr>
+          <td>${escapeHtml(row.quote)}</td>
+          <td><textarea data-id="${row.id}" data-field="code">${escapeHtml(row.code)}</textarea></td>
+          <td><textarea data-id="${row.id}" data-field="theme">${escapeHtml(row.theme)}</textarea></td>
+          <td>
+            <label class="checkline">
+              <input type="checkbox" data-id="${row.id}" data-field="review" ${row.review ? "checked" : ""}>
+              需复核
+            </label>
+            <textarea data-id="${row.id}" data-field="note">${escapeHtml(row.note)}</textarea>
+          </td>
+        </tr>
+      `).join("") || `<tr><td colspan="4"><div class="empty">暂无编码。导入材料后点击分析。</div></td></tr>`;
+    }
+
+    function renderThemes() {
+      els.themeGrid.innerHTML = state.themes.map(theme => `
+        <div class="theme">
+          <h4>${escapeHtml(theme.name)}</h4>
+          <ul>${theme.items.slice(0, 4).map(row => `<li>${escapeHtml(row.code)}：${escapeHtml(row.meaning)}</li>`).join("")}</ul>
+        </div>
+      `).join("") || `<div class="empty">暂无主题</div>`;
+    }
+
+    function renderDerived() {
+      els.methodDraft.textContent = buildDraft();
+      els.riskList.innerHTML = buildRisks().map(item => `<div class="risk">${escapeHtml(item)}</div>`).join("");
+      els.llmPrompt.value = buildLlmPrompt();
+    }
+
+    function renderAudit() {
+      els.auditList.innerHTML = state.history.map(item => `
+        <div class="audit-item">
+          <b>${escapeHtml(formatTime(item.at))} · 片段 ${escapeHtml(item.rowId)} · ${escapeHtml(FIELD_LABELS[item.field] || item.field)}</b>
+          <div>${escapeHtml(item.quote || "")}</div>
+          <div class="audit-change">
+            <span>修改前：${escapeHtml(formatAuditValue(item.before))}</span>
+            <span>修改后：${escapeHtml(formatAuditValue(item.after))}</span>
+          </div>
+        </div>
+      `).join("") || `<div class="empty">暂无人工修改记录</div>`;
+    }
+
+    function rebuildThemes() {
+      const themeMap = new Map();
+      state.rows.forEach(row => {
+        const themeName = row.theme?.trim() || "未命名主题";
+        row.theme = themeName;
+        if (!themeMap.has(themeName)) themeMap.set(themeName, []);
+        themeMap.get(themeName).push(row);
+      });
+      state.themes = Array.from(themeMap.entries()).map(([name, items]) => ({ name, items }));
+    }
+
+    function normalizeRow(row, index) {
+      const quote = String(row.quote ?? row.text ?? "").trim();
+      return {
+        id: Number(row.id) || index + 1,
+        quote,
+        meaning: String(row.meaning ?? (quote.length > 44 ? quote.slice(0, 44) + "..." : quote)),
+        code: String(row.code ?? "").trim() || "待归纳片段",
+        theme: String(row.theme ?? "").trim() || "开放问题与补充材料",
+        note: String(row.note ?? row.memo ?? "").trim() || "建议人工确认语境。",
+        review: Boolean(row.review ?? row.needs_review ?? row.needsReview)
+      };
+    }
+
+    function buildDraft() {
+      if (!state.rows.length || !state.method) return "暂无方法段。";
+      const themeNames = state.themes.map(t => t.name).join("、");
+      const memoLine = state.memos.method.trim()
+        ? `方法备忘录同时记录了研究者对编码规则与主题调整的判断：${state.memos.method.trim()}`
+        : "研究者在分析过程中保留方法备忘录，用于记录主题合并、拆分和复核理由。";
+      return `本研究采用${state.method.name}处理质性材料。研究者首先对访谈文本进行分段，形成 ${state.rows.length} 个意义单元；随后围绕研究问题“${els.question.value.trim()}”进行初始编码，并将编码进一步归并为 ${state.themes.length} 个主题：${themeNames}。为降低 AI 辅助分析的黑箱风险，每一项编码均保留原始文本片段、初始编码、主题归属和人工复核状态。当前编码表包含 ${state.history.length} 条人工修订轨迹，后续由研究者结合理论框架与上下文继续复核。${memoLine}`;
+    }
+
+    function buildRisks() {
+      const risks = [];
+      if (!state.rows.length) {
+        risks.push("尚未生成编码表，无法形成可复核的方法说明。");
+        return risks;
+      }
+      if (state.rows.some(row => row.review)) risks.push("存在低置信片段，需要人工确认编码是否贴合上下文。");
+      if (/文献|引用|参考/.test(els.sourceText.value)) risks.push("涉及文献或引用时，需要用数据库核验来源，不应直接信任模型生成。");
+      if (state.method?.badge === "Grounded") risks.push("扎根理论不能由一次自动编码直接宣称理论饱和，需要补充比较、备忘录和人工判断。");
+      if (!state.history.length) risks.push("尚未记录人工修订轨迹，建议至少复核并修改部分编码，以体现研究者判断。");
+      risks.push("编码表可作为初稿，论文中应说明研究者复核、合并和重命名主题的过程。");
+      return risks;
+    }
+
+    function buildLlmPrompt() {
+      const codingPreview = state.rows.slice(0, 18).map(row =>
+        `${row.id}. 原文：${row.quote}\n   初始编码：${row.code}\n   主题：${row.theme}\n   复核：${row.review ? "是" : "否"}\n   备注：${row.note}`
+      ).join("\n");
+      const materialPreview = splitUnits(els.sourceText.value).slice(0, 24).map((unit, index) => `${index + 1}. ${unit}`).join("\n");
+
+      return `你是一名社会科学质性研究方法助手，请帮助我复核编码，而不是代替研究者下最终结论。
+
+项目：${els.project.value.trim()}
+学科语境：${els.discipline.value}
+研究问题：${els.question.value.trim()}
+理论状态：${labelForMode(state.theoryMode)}
+分析路径：${state.method?.name || labelForMode(state.methodMode)}
+
+请完成：
+1. 检查每个意义单元的初始编码是否贴合原文语义。
+2. 判断主题/范畴是否过宽、过窄或混入了方法论判断。
+3. 给出需要人工复核的片段编号和理由。
+4. 输出可导入表格的 JSON 数组，字段包括 id、quote、code、theme、note、needs_review。
+5. 不要编造文献、访谈背景或不存在的受访者信息。
+
+研究者备忘录：
+${state.memos.researcher.trim() || "暂无"}
+
+方法备忘录：
+${state.memos.method.trim() || "暂无"}
+
+当前编码表：
+${codingPreview || "尚未生成编码表，可先基于下方材料提出初始编码。"}
+
+原始材料片段：
+${materialPreview || "暂无"}`;
+    }
+
+    function serializeProject() {
+      syncMemos();
+      return {
+        version: 2,
+        savedAt: new Date().toISOString(),
+        project: els.project.value,
+        question: els.question.value,
+        discipline: els.discipline.value,
+        theoryMode: state.theoryMode,
+        methodMode: state.methodMode,
+        sourceText: els.sourceText.value,
+        rows: state.rows,
+        method: state.method,
+        history: state.history,
+        memos: state.memos
+      };
+    }
+
+    function hydrateProject(project) {
+      if (!project || typeof project !== "object") throw new Error("项目文件格式不正确");
+      els.project.value = project.project || project.name || els.project.value;
+      els.question.value = project.question || els.question.value;
+      if (project.discipline) els.discipline.value = project.discipline;
+      els.sourceText.value = project.sourceText || (project.rows || []).map(row => row.quote || row.text || "").filter(Boolean).join("\n");
+      state.theoryMode = project.theoryMode || "known";
+      state.methodMode = project.methodMode || "auto";
+      state.rows = Array.isArray(project.rows) ? project.rows.map(normalizeRow) : [];
+      state.method = project.method || (state.rows.length ? recommendMethod(state.rows.map(row => row.quote)) : null);
+      state.history = Array.isArray(project.history) ? project.history : [];
+      state.memos = {
+        researcher: project.memos?.researcher || "",
+        method: project.memos?.method || ""
+      };
+      els.researcherMemo.value = state.memos.researcher;
+      els.methodMemo.value = state.memos.method;
+      setSegmentedActive("theoryMode", state.theoryMode);
+      setSegmentedActive("methodMode", state.methodMode);
+      rebuildThemes();
+      render("overview");
+    }
+
+    function saveProject(manual = false) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(serializeProject()));
+        if (manual) showStatus("项目已保存到本机浏览器");
+        return true;
+      } catch (error) {
+        showStatus(`保存失败：${error.message}`);
+        return false;
+      }
+    }
+
+    function loadProject(manual = false) {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (!stored) {
+        if (manual) showStatus("没有找到本地保存项目");
+        return false;
+      }
+      try {
+        hydrateProject(JSON.parse(stored));
+        if (manual) showStatus("已载入本地保存项目");
+        return true;
+      } catch (error) {
+        showStatus(`载入失败：${error.message}`);
+        return false;
+      }
+    }
+
+    function scheduleAutoSave() {
+      clearTimeout(autoSaveTimer);
+      autoSaveTimer = setTimeout(() => saveProject(false), 420);
+    }
+
+    async function handleImportFile() {
+      const file = els.importFile.files?.[0];
+      if (!file) return;
+      const text = await file.text();
+      const name = file.name.toLowerCase();
+
+      try {
+        if (name.endsWith(".json") || text.trim().startsWith("{")) {
+          hydrateProject(JSON.parse(text));
+          saveProject(false);
+          showStatus(`已导入项目：${file.name}`);
+          return;
+        }
+
+        if (name.endsWith(".csv") || file.type.includes("csv")) {
+          importCsv(text);
+          saveProject(false);
+          showStatus(`已导入 CSV：${file.name}`);
+          return;
+        }
+
+        els.sourceText.value = text.trim();
+        analyze({ preserveExisting: false });
+        showStatus(`已导入文本：${file.name}`);
+      } catch (error) {
+        showStatus(`导入失败：${error.message}`);
+      } finally {
+        els.importFile.value = "";
+      }
+    }
+
+    function importCsv(text) {
+      const records = parseCsv(text);
+      if (!records.length) throw new Error("CSV 为空");
+      const headers = records[0].map(cell => cell.trim().toLowerCase());
+      const quoteIndex = findHeader(headers, ["quote", "source", "text", "原文", "片段", "材料", "访谈"]);
+      const codeIndex = findHeader(headers, ["code", "coding", "initial_code", "编码", "初始编码"]);
+      const themeIndex = findHeader(headers, ["theme", "category", "主题", "范畴"]);
+      const noteIndex = findHeader(headers, ["note", "memo", "备注", "方法备注"]);
+      const reviewIndex = findHeader(headers, ["needs_review", "review", "复核", "需复核"]);
+
+      if (quoteIndex >= 0) {
+        const rows = records.slice(1)
+          .map((record, index) => {
+            const quote = String(record[quoteIndex] || "").trim();
+            if (!quote) return null;
+            const picked = chooseTheme(quote);
+            return normalizeRow({
+              id: index + 1,
+              quote,
+              code: codeIndex >= 0 ? record[codeIndex] || picked.code : picked.code,
+              theme: themeIndex >= 0 ? record[themeIndex] || picked.theme : picked.theme,
+              note: noteIndex >= 0 ? record[noteIndex] || picked.note : picked.note,
+              review: reviewIndex >= 0 ? parseBoolean(record[reviewIndex]) : picked.review
+            }, index);
+          })
+          .filter(Boolean);
+        els.sourceText.value = rows.map(row => row.quote).join("\n");
+        state.rows = rows;
+        state.method = rows.length ? recommendMethod(rows.map(row => row.quote)) : null;
+        rebuildThemes();
+        render("coding");
+        return;
+      }
+
+      els.sourceText.value = records.map(record => record.filter(Boolean).join(" ")).join("\n");
+      analyze({ preserveExisting: false });
+    }
+
+    function parseCsv(text) {
+      const records = [];
+      let row = [];
+      let cell = "";
+      let quoted = false;
+
+      for (let index = 0; index < text.length; index += 1) {
+        const char = text[index];
+        const next = text[index + 1];
+        if (quoted) {
+          if (char === '"' && next === '"') {
+            cell += '"';
+            index += 1;
+          } else if (char === '"') {
+            quoted = false;
+          } else {
+            cell += char;
+          }
+        } else if (char === '"') {
+          quoted = true;
+        } else if (char === ",") {
+          row.push(cell);
+          cell = "";
+        } else if (char === "\n") {
+          row.push(cell);
+          records.push(row);
+          row = [];
+          cell = "";
+        } else if (char !== "\r") {
+          cell += char;
+        }
+      }
+
+      row.push(cell);
+      records.push(row);
+      return records.filter(record => record.some(cellValue => String(cellValue).trim()));
+    }
+
+    function findHeader(headers, candidates) {
+      return headers.findIndex(header => candidates.some(candidate => header.includes(candidate.toLowerCase())));
+    }
+
+    function exportCsv() {
+      const headers = ["id", "quote", "code", "theme", "note", "needs_review"];
+      const lines = [headers.join(",")].concat(state.rows.map(row => headers.map(key => csv(row[key === "needs_review" ? "review" : key])).join(",")));
+      download(`${safeFileName(els.project.value)}-coding.csv`, "\ufeff" + lines.join("\n"), "text/csv;charset=utf-8");
+      showStatus("编码表 CSV 已导出");
+    }
+
+    function exportJson() {
+      download(`${safeFileName(els.project.value)}-project.json`, JSON.stringify(serializeProject(), null, 2), "application/json;charset=utf-8");
+      showStatus("项目 JSON 已导出");
+    }
+
+    function exportDoc() {
+      download(`${safeFileName(els.project.value)}-method-report.doc`, buildDocHtml(), "application/msword;charset=utf-8");
+      showStatus("Word 兼容文档已导出");
+    }
+
+    function buildDocHtml() {
+      const themeHtml = state.themes.map(theme => `
+        <h2>${escapeHtml(theme.name)}</h2>
+        <ul>${theme.items.map(row => `<li>${escapeHtml(row.code)}：${escapeHtml(row.meaning)}</li>`).join("")}</ul>
+      `).join("");
+      const rowHtml = state.rows.map(row => `
+        <tr>
+          <td>${escapeHtml(row.id)}</td>
+          <td>${escapeHtml(row.quote)}</td>
+          <td>${escapeHtml(row.code)}</td>
+          <td>${escapeHtml(row.theme)}</td>
+          <td>${escapeHtml(row.note)}</td>
+          <td>${row.review ? "是" : "否"}</td>
+        </tr>
+      `).join("");
+
+      return `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>${escapeHtml(els.project.value)} 方法报告</title>
+  <style>
+    body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; line-height: 1.6; color: #20231f; }
+    h1 { font-size: 22px; }
+    h2 { font-size: 17px; margin-top: 22px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { border: 1px solid #d9dfd3; padding: 6px; vertical-align: top; }
+    th { background: #f1f5ef; }
+    .muted { color: #687066; }
+  </style>
+</head>
+<body>
+  <h1>${escapeHtml(els.project.value)}</h1>
+  <p class="muted">学科语境：${escapeHtml(els.discipline.value)} · 导出时间：${escapeHtml(new Date().toLocaleString("zh-CN"))}</p>
+  <h2>研究问题</h2>
+  <p>${escapeHtml(els.question.value)}</p>
+  <h2>方法段草稿</h2>
+  <p>${escapeHtml(buildDraft()).replace(/\n/g, "<br>")}</p>
+  <h2>主题结构</h2>
+  ${themeHtml || "<p>暂无主题。</p>"}
+  <h2>研究者备忘录</h2>
+  <p>${escapeHtml(state.memos.researcher || "暂无").replace(/\n/g, "<br>")}</p>
+  <h2>方法备忘录</h2>
+  <p>${escapeHtml(state.memos.method || "暂无").replace(/\n/g, "<br>")}</p>
+  <h2>编码表</h2>
+  <table>
+    <thead><tr><th>ID</th><th>原文片段</th><th>初始编码</th><th>主题/范畴</th><th>方法备注</th><th>需复核</th></tr></thead>
+    <tbody>${rowHtml}</tbody>
+  </table>
+</body>
+</html>`;
+    }
+
+    function copyDraft() {
+      copyText(els.methodDraft.textContent, "方法段已复制");
+    }
+
+    function copyPrompt() {
+      els.llmPrompt.value = buildLlmPrompt();
+      copyText(els.llmPrompt.value, "LLM 提示词已复制");
+    }
+
+    function copyText(text, message) {
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(text).then(() => showStatus(message)).catch(() => fallbackCopy(text, message));
+      } else {
+        fallbackCopy(text, message);
+      }
+    }
+
+    function fallbackCopy(text, message) {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.left = "-999px";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+      showStatus(message);
+    }
+
+    function download(name, content, type) {
+      const blob = new Blob([content], { type });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = name;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    function csv(value) {
+      const text = value == null ? "" : String(value);
+      return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    }
+
+    function recordAudit(row, field, before, after) {
+      if (String(before) === String(after)) return;
+      state.history.unshift({
+        at: new Date().toISOString(),
+        rowId: row.id,
+        field,
+        before,
+        after,
+        quote: row.quote.slice(0, 96)
+      });
+      state.history = state.history.slice(0, 160);
+    }
+
+    function syncMemos() {
+      state.memos.researcher = els.researcherMemo.value;
+      state.memos.method = els.methodMemo.value;
+    }
+
+    function getActiveTab() {
+      return document.querySelector(".tabs button.active")?.dataset.tab || "overview";
+    }
+
+    function activateTab(tabId) {
+      const target = document.querySelector(`.tabs button[data-tab="${tabId}"]`) ? tabId : "overview";
+      document.querySelectorAll(".tabs button").forEach(button => button.classList.toggle("active", button.dataset.tab === target));
+      document.querySelectorAll(".tab-panel").forEach(panel => panel.classList.toggle("active", panel.id === target));
+    }
+
+    function setSegmentedActive(id, mode) {
+      document.querySelectorAll(`#${id} button`).forEach(button => button.classList.toggle("active", button.dataset.mode === mode));
+    }
+
+    function showStatus(message) {
+      els.statusLine.textContent = message;
+      els.statusLine.classList.add("active");
+      clearTimeout(statusTimer);
+      statusTimer = setTimeout(() => {
+        els.statusLine.classList.remove("active");
+      }, 2600);
+    }
+
+    function parseBoolean(value) {
+      return /^(true|1|yes|y|是|需复核)$/i.test(String(value).trim());
+    }
+
+    function formatAuditValue(value) {
+      if (typeof value === "boolean") return value ? "需复核" : "已复核";
+      return String(value ?? "");
+    }
+
+    function formatTime(value) {
+      return new Date(value).toLocaleString("zh-CN", { hour12: false });
+    }
+
+    function labelForMode(mode) {
+      return {
+        known: "已有理论",
+        mixed: "半开放",
+        explore: "探索",
+        auto: "自动",
+        theme: "主题分析",
+        grounded: "扎根理论"
+      }[mode] || mode;
+    }
+
+    function safeFileName(value) {
+      return String(value || "qual-method-project").trim().replace(/[\\/:*?"<>|]+/g, "-").slice(0, 80) || "qual-method-project";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    document.querySelectorAll("#theoryMode button").forEach(button => {
+      button.addEventListener("click", () => {
+        state.theoryMode = button.dataset.mode;
+        setSegmentedActive("theoryMode", state.theoryMode);
+        if (state.rows.length) state.method = recommendMethod(state.rows.map(row => row.quote));
+        render(getActiveTab());
+        scheduleAutoSave();
+      });
+    });
+
+    document.querySelectorAll("#methodMode button").forEach(button => {
+      button.addEventListener("click", () => {
+        state.methodMode = button.dataset.mode;
+        setSegmentedActive("methodMode", state.methodMode);
+        if (state.rows.length) state.method = recommendMethod(state.rows.map(row => row.quote));
+        render(getActiveTab());
+        scheduleAutoSave();
+      });
+    });
+
+    document.querySelectorAll(".tabs button").forEach(button => {
+      button.addEventListener("click", () => activateTab(button.dataset.tab));
+    });
+
+    els.codingRows.addEventListener("change", event => {
+      const target = event.target;
+      if (!target.matches("textarea,input[type='checkbox']")) return;
+      const row = state.rows.find(item => item.id === Number(target.dataset.id));
+      if (!row) return;
+      const field = target.dataset.field;
+      const before = row[field];
+      const after = target.type === "checkbox" ? target.checked : target.value;
+      row[field] = after;
+      recordAudit(row, field, before, after);
+      rebuildThemes();
+      render("coding");
+      scheduleAutoSave();
+      showStatus("已记录人工修改");
+    });
+
+    [els.project, els.question].forEach(input => {
+      input.addEventListener("input", () => {
+        renderDerived();
+        scheduleAutoSave();
+      });
+    });
+
+    els.discipline.addEventListener("change", () => {
+      renderDerived();
+      scheduleAutoSave();
+    });
+
+    els.sourceText.addEventListener("input", () => {
+      els.unitHint.textContent = `${splitUnits(els.sourceText.value).length} 待分析`;
+      scheduleAutoSave();
+    });
+
+    [els.researcherMemo, els.methodMemo].forEach(input => {
+      input.addEventListener("input", () => {
+        syncMemos();
+        renderDerived();
+        scheduleAutoSave();
+      });
+    });
+
+    document.getElementById("analyzeBtn").addEventListener("click", () => analyze({ preserveExisting: true }));
+    document.getElementById("recodeBtn").addEventListener("click", () => analyze({ preserveExisting: false, tab: getActiveTab() }));
+    document.getElementById("sampleBtn").addEventListener("click", () => {
+      els.sourceText.value = sampleText;
+      state.history = [];
+      analyze({ preserveExisting: false });
+      showStatus("已载入小红书需求样本");
+    });
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      els.sourceText.value = "";
+      state.rows = [];
+      state.themes = [];
+      state.method = null;
+      state.history = [];
+      state.memos = { researcher: "", method: "" };
+      els.researcherMemo.value = "";
+      els.methodMemo.value = "";
+      render("overview");
+      scheduleAutoSave();
+      showStatus("已清空材料与分析结果");
+    });
+    document.getElementById("importBtn").addEventListener("click", () => els.importFile.click());
+    els.importFile.addEventListener("change", handleImportFile);
+    document.getElementById("saveProjectBtn").addEventListener("click", () => saveProject(true));
+    document.getElementById("loadProjectBtn").addEventListener("click", () => loadProject(true));
+    document.getElementById("exportCsvBtn").addEventListener("click", exportCsv);
+    document.getElementById("exportJsonBtn").addEventListener("click", exportJson);
+    document.getElementById("exportDocBtn").addEventListener("click", exportDoc);
+    document.getElementById("copyDraftBtn").addEventListener("click", copyDraft);
+    document.getElementById("clearAuditBtn").addEventListener("click", () => {
+      state.history = [];
+      render("audit");
+      scheduleAutoSave();
+      showStatus("审计轨迹已清空");
+    });
+    document.getElementById("refreshPromptBtn").addEventListener("click", () => {
+      els.llmPrompt.value = buildLlmPrompt();
+      showStatus("提示词已刷新");
+    });
+    document.getElementById("copyPromptBtn").addEventListener("click", copyPrompt);
+
+    if (!loadProject(false)) {
+      els.sourceText.value = sampleText;
+      analyze({ preserveExisting: false });
+      showStatus("已载入默认样本，可直接试用");
+    } else {
+      showStatus("已恢复本地保存项目");
+    }
+  </script>
+</body>
+</html>

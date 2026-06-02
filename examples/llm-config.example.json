@@ -1,0 +1,15 @@
+{
+  "provider": "deepseek",
+  "adapter": "openai",
+  "baseUrl": "https://api.deepseek.com",
+  "model": "deepseek-v4-flash",
+  "batchSize": 8,
+  "delayMs": 1200,
+  "rpm": 30,
+  "maxTokens": 1200,
+  "temperature": 0.2,
+  "tokenParam": "max_tokens",
+  "structured": "json_object",
+  "contextMode": "lean",
+  "language": "zh-CN"
+}

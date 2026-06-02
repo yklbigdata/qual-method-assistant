@@ -563,6 +563,48 @@
       background: #fbfcfa;
     }
 
+    .config-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .config-grid .wide {
+      grid-column: span 2;
+    }
+
+    .config-grid .full {
+      grid-column: 1 / -1;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      margin: 0 0 10px;
+    }
+
+    .progress {
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 10px;
+      background: #fbfcfa;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+
+    .result-box {
+      min-height: 240px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      background: #fbfcfa;
+    }
+
     .empty {
       color: var(--muted);
       padding: 32px 14px;
@@ -608,8 +650,13 @@
       .stats,
       .theme-grid,
       .memo-grid,
+      .config-grid,
       .audit-change {
         grid-template-columns: 1fr;
+      }
+
+      .config-grid .wide {
+        grid-column: auto;
       }
 
       .content {
@@ -624,23 +671,31 @@
       <div class="brand">
         <div class="brand-mark" aria-hidden="true"></div>
         <div>
-          <h1>质性方法助手</h1>
-          <p>主题分析 · 扎根理论 · 证据链</p>
+          <h1 data-i18n="appTitle">质性方法助手</h1>
+          <p data-i18n="appSubtitle">主题分析 · 扎根理论 · 证据链</p>
         </div>
       </div>
 
       <div class="field">
-        <label for="project">项目</label>
+        <label for="languageSelect" data-i18n="language">语言</label>
+        <select id="languageSelect">
+          <option value="zh-CN">中文</option>
+          <option value="en-US">English</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="project" data-i18n="project">项目</label>
         <input id="project" value="生成式 AI 态度访谈分析">
       </div>
 
       <div class="field">
-        <label for="question">研究问题</label>
+        <label for="question" data-i18n="question">研究问题</label>
         <textarea id="question">用户如何理解和使用生成式 AI？他们在学术任务中遇到哪些风险、焦虑与策略？</textarea>
       </div>
 
       <div class="field">
-        <label for="discipline">学科语境</label>
+        <label for="discipline" data-i18n="discipline">学科语境</label>
         <select id="discipline">
           <option>社会学 / 教育学 / 传播学</option>
           <option>管理学 / 信息系统</option>
@@ -650,56 +705,56 @@
       </div>
 
       <div class="field">
-        <label>理论状态</label>
+        <label data-i18n="theoryStatus">理论状态</label>
         <div class="segmented" id="theoryMode">
-          <button data-mode="known" class="active">已有理论</button>
-          <button data-mode="mixed">半开放</button>
-          <button data-mode="explore">探索</button>
+          <button data-mode="known" class="active" data-i18n="knownTheory">已有理论</button>
+          <button data-mode="mixed" data-i18n="mixedTheory">半开放</button>
+          <button data-mode="explore" data-i18n="exploreTheory">探索</button>
         </div>
       </div>
 
       <div class="field">
-        <label>分析路径</label>
+        <label data-i18n="analysisPath">分析路径</label>
         <div class="segmented" id="methodMode">
-          <button data-mode="auto" class="active">自动</button>
-          <button data-mode="theme">主题</button>
-          <button data-mode="grounded">扎根</button>
+          <button data-mode="auto" class="active" data-i18n="autoPath">自动</button>
+          <button data-mode="theme" data-i18n="themePath">主题</button>
+          <button data-mode="grounded" data-i18n="groundedPath">扎根</button>
         </div>
       </div>
 
       <div class="toolbar">
-        <button class="primary" id="analyzeBtn">分析</button>
-        <button id="sampleBtn">样本</button>
-        <button id="clearBtn">清空</button>
+        <button class="primary" id="analyzeBtn" data-i18n="analyze">分析</button>
+        <button id="sampleBtn" data-i18n="sample">样本</button>
+        <button id="clearBtn" data-i18n="clear">清空</button>
       </div>
 
       <div class="toolbar">
-        <button id="importBtn">导入 TXT/CSV</button>
-        <button id="saveProjectBtn">保存项目</button>
-        <button id="loadProjectBtn">载入项目</button>
+        <button id="importBtn" data-i18n="importFile">导入 TXT/CSV</button>
+        <button id="saveProjectBtn" data-i18n="saveProject">保存项目</button>
+        <button id="loadProjectBtn" data-i18n="loadProject">载入项目</button>
       </div>
       <input class="file-input" id="importFile" type="file" accept=".txt,.csv,.json,text/plain,text/csv,application/json">
-      <div class="status" id="statusLine">本地自动保存已开启</div>
+      <div class="status" id="statusLine" data-i18n="autosaveOn">本地自动保存已开启</div>
     </aside>
 
     <main class="main">
       <header class="topbar">
         <div class="topbar-title">
-          <h2 id="screenTitle">编码工作台</h2>
+          <h2 id="screenTitle" data-i18n="workspace">编码工作台</h2>
           <p id="screenMeta">等待分析</p>
         </div>
         <div class="toolbar">
-          <button id="exportCsvBtn">导出 CSV</button>
-          <button id="exportJsonBtn">导出 JSON</button>
-          <button id="exportDocBtn">导出 DOC</button>
-          <button id="copyDraftBtn">复制方法段</button>
+          <button id="exportCsvBtn" data-i18n="exportCsv">导出 CSV</button>
+          <button id="exportJsonBtn" data-i18n="exportJson">导出 JSON</button>
+          <button id="exportDocBtn" data-i18n="exportDoc">导出 DOC</button>
+          <button id="copyDraftBtn" data-i18n="copyDraft">复制方法段</button>
         </div>
       </header>
 
       <section class="content">
         <section class="panel">
           <div class="panel-header">
-            <h3>材料</h3>
+            <h3 data-i18n="materials">材料</h3>
             <span class="pill" id="unitHint">0 个片段</span>
           </div>
           <div class="panel-body">
@@ -709,28 +764,28 @@
 
         <section class="panel">
           <div class="panel-header">
-            <h3>分析</h3>
+            <h3 data-i18n="analysis">分析</h3>
             <div class="toolbar">
-              <button class="icon" id="recodeBtn" title="重新编码">↻</button>
+              <button class="icon" id="recodeBtn" title="重新编码" data-i18n-title="recode">↻</button>
             </div>
           </div>
           <div class="tabs">
-            <button data-tab="overview" class="active">概览</button>
-            <button data-tab="coding">编码表</button>
-            <button data-tab="themes">主题</button>
-            <button data-tab="draft">方法段</button>
-            <button data-tab="risks">复核</button>
-            <button data-tab="memos">备忘录</button>
-            <button data-tab="audit">审计</button>
+            <button data-tab="overview" class="active" data-i18n="tabOverview">概览</button>
+            <button data-tab="coding" data-i18n="tabCoding">编码表</button>
+            <button data-tab="themes" data-i18n="tabThemes">主题</button>
+            <button data-tab="draft" data-i18n="tabDraft">方法段</button>
+            <button data-tab="risks" data-i18n="tabRisks">复核</button>
+            <button data-tab="memos" data-i18n="tabMemos">备忘录</button>
+            <button data-tab="audit" data-i18n="tabAudit">审计</button>
             <button data-tab="llm">LLM</button>
           </div>
           <div class="panel-body">
             <div id="overview" class="tab-panel active">
               <div class="stats">
-                <div class="stat"><b id="statUnits">0</b><span>意义单元</span></div>
-                <div class="stat"><b id="statCodes">0</b><span>初始编码</span></div>
-                <div class="stat"><b id="statThemes">0</b><span>主题</span></div>
-                <div class="stat"><b id="statReview">0</b><span>需复核</span></div>
+                <div class="stat"><b id="statUnits">0</b><span data-i18n="meaningUnits">意义单元</span></div>
+                <div class="stat"><b id="statCodes">0</b><span data-i18n="initialCodes">初始编码</span></div>
+                <div class="stat"><b id="statThemes">0</b><span data-i18n="themes">主题</span></div>
+                <div class="stat"><b id="statReview">0</b><span data-i18n="needsReview">需复核</span></div>
               </div>
               <div class="method-box">
                 <div>
@@ -739,7 +794,7 @@
                 </div>
                 <span class="pill" id="methodBadge">Method</span>
               </div>
-              <div class="empty" id="overviewEmpty">暂无结果</div>
+              <div class="empty" id="overviewEmpty" data-i18n="noResults">暂无结果</div>
             </div>
 
             <div id="coding" class="tab-panel">
@@ -747,10 +802,10 @@
                 <table>
                   <thead>
                     <tr>
-                      <th style="width: 32%">原文片段</th>
-                      <th style="width: 24%">初始编码</th>
-                      <th style="width: 22%">主题/范畴</th>
-                      <th style="width: 22%">方法备注</th>
+                      <th style="width: 32%" data-i18n="quote">原文片段</th>
+                      <th style="width: 24%" data-i18n="initialCode">初始编码</th>
+                      <th style="width: 22%" data-i18n="themeCategory">主题/范畴</th>
+                      <th style="width: 22%" data-i18n="methodNote">方法备注</th>
                     </tr>
                   </thead>
                   <tbody id="codingRows"></tbody>
@@ -773,33 +828,120 @@
             <div id="memos" class="tab-panel">
               <div class="memo-grid">
                 <div class="field">
-                  <label for="researcherMemo">研究者备忘录</label>
-                  <textarea id="researcherMemo" placeholder="记录你对受访者语境、反例、比较对象和理论敏感概念的判断。"></textarea>
+                  <label for="researcherMemo" data-i18n="researcherMemo">研究者备忘录</label>
+                  <textarea id="researcherMemo" data-i18n-placeholder="researcherMemoPlaceholder" placeholder="记录你对受访者语境、反例、比较对象和理论敏感概念的判断。"></textarea>
                 </div>
                 <div class="field">
-                  <label for="methodMemo">方法备忘录</label>
-                  <textarea id="methodMemo" placeholder="记录编码规则、主题合并/拆分理由、导师反馈和答辩时需要说明的边界。"></textarea>
+                  <label for="methodMemo" data-i18n="methodMemo">方法备忘录</label>
+                  <textarea id="methodMemo" data-i18n-placeholder="methodMemoPlaceholder" placeholder="记录编码规则、主题合并/拆分理由、导师反馈和答辩时需要说明的边界。"></textarea>
                 </div>
               </div>
             </div>
 
             <div id="audit" class="tab-panel">
               <div class="section-tools">
-                <p>记录人工修改编码、主题和复核状态的轨迹，便于说明 AI 初稿如何被研究者修订。</p>
-                <button id="clearAuditBtn">清空审计</button>
+                <p data-i18n="auditHelp">记录人工修改编码、主题和复核状态的轨迹，便于说明 AI 初稿如何被研究者修订。</p>
+                <button id="clearAuditBtn" data-i18n="clearAudit">清空审计</button>
               </div>
               <div class="audit-list" id="auditList"></div>
             </div>
 
             <div id="llm" class="tab-panel">
               <div class="section-tools">
-                <p>复制提示词到你自己的模型或私有 API 中运行；当前 MVP 不上传材料。</p>
+                <p data-i18n="llmHelp">配置服务商后可在线编码；API Key 只保存在当前页面输入框，不写入本地项目。</p>
                 <div class="toolbar">
-                  <button id="refreshPromptBtn">刷新提示词</button>
-                  <button id="copyPromptBtn">复制提示词</button>
+                  <button id="refreshPromptBtn" data-i18n="refreshPrompt">刷新提示词</button>
+                  <button id="copyPromptBtn" data-i18n="copyPrompt">复制提示词</button>
                 </div>
               </div>
+              <div class="config-grid">
+                <div class="field">
+                  <label for="providerSelect" data-i18n="provider">服务商</label>
+                  <select id="providerSelect">
+                    <option value="deepseek">DeepSeek</option>
+                    <option value="openai">OpenAI</option>
+                    <option value="anthropic">Anthropic</option>
+                    <option value="aliyun">阿里百炼 / DashScope</option>
+                    <option value="volcengine">火山引擎 / Ark</option>
+                    <option value="zhipu">智谱 / BigModel</option>
+                    <option value="custom">自定义 / Custom</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="adapterSelect" data-i18n="adapter">接口格式</label>
+                  <select id="adapterSelect">
+                    <option value="openai">OpenAI-compatible</option>
+                    <option value="anthropic">Anthropic Messages</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="modelInput" data-i18n="model">模型</label>
+                  <input id="modelInput" value="deepseek-v4-flash">
+                </div>
+                <div class="field wide">
+                  <label for="baseUrlInput">Base URL</label>
+                  <input id="baseUrlInput" value="https://api.deepseek.com">
+                </div>
+                <div class="field">
+                  <label for="apiKeyInput">API Key</label>
+                  <input id="apiKeyInput" type="password" autocomplete="off" data-i18n-placeholder="apiKeyPlaceholder" placeholder="不会保存到项目">
+                </div>
+                <div class="field">
+                  <label for="batchSizeInput" data-i18n="batchSize">每批片段数</label>
+                  <input id="batchSizeInput" type="number" min="1" max="50" value="8">
+                </div>
+                <div class="field">
+                  <label for="delayInput" data-i18n="delayMs">批次间隔 ms</label>
+                  <input id="delayInput" type="number" min="0" step="100" value="1200">
+                </div>
+                <div class="field">
+                  <label for="rpmInput" data-i18n="rpm">每分钟请求上限</label>
+                  <input id="rpmInput" type="number" min="0" value="30">
+                </div>
+                <div class="field">
+                  <label for="maxTokensInput" data-i18n="maxTokens">最大输出 tokens</label>
+                  <input id="maxTokensInput" type="number" min="128" step="128" value="1200">
+                </div>
+                <div class="field">
+                  <label for="temperatureInput">Temperature</label>
+                  <input id="temperatureInput" type="number" min="0" max="2" step="0.1" value="0.2">
+                </div>
+                <div class="field">
+                  <label for="tokenParamSelect" data-i18n="tokenParam">输出 token 参数</label>
+                  <select id="tokenParamSelect">
+                    <option value="max_tokens">max_tokens</option>
+                    <option value="max_completion_tokens">max_completion_tokens</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="structuredSelect" data-i18n="structuredOutput">结构化输出</label>
+                  <select id="structuredSelect">
+                    <option value="json_object">JSON object</option>
+                    <option value="json_schema">JSON schema</option>
+                    <option value="prompt_only">Prompt only</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="contextModeSelect" data-i18n="contextMode">上下文模式</label>
+                  <select id="contextModeSelect">
+                    <option value="lean" data-i18n="contextLean">省 tokens</option>
+                    <option value="rich" data-i18n="contextRich">完整语境</option>
+                  </select>
+                </div>
+                <div class="field full">
+                  <label for="systemPromptInput" data-i18n="systemPrompt">系统提示词</label>
+                  <textarea id="systemPromptInput" data-i18n-placeholder="systemPromptPlaceholder" placeholder="默认使用社科质性编码助手提示词"></textarea>
+                </div>
+              </div>
+              <p class="hint" id="providerHint"></p>
+              <div class="toolbar">
+                <button class="primary" id="runLlmBtn" data-i18n="runOnlineCoding">在线 LLM 编码</button>
+                <button id="applyLlmBtn" data-i18n="applyLlmResults">应用 LLM 结果</button>
+                <button id="downloadLlmConfigBtn" data-i18n="downloadLlmConfig">下载本地脚本配置</button>
+              </div>
+              <div class="progress" id="llmProgress" data-i18n="llmIdle">LLM 待运行</div>
               <textarea id="llmPrompt" class="prompt-box" readonly></textarea>
+              <textarea id="llmResult" class="result-box" readonly data-i18n-placeholder="llmResultPlaceholder" placeholder="LLM 返回的 JSON 会显示在这里"></textarea>
             </div>
           </div>
         </section>
@@ -1627,6 +1769,740 @@ ${materialPreview || "暂无"}`;
     } else {
       showStatus("已恢复本地保存项目");
     }
+  </script>
+  <script>
+    (() => {
+      const UI_STORAGE_KEY = "qual-method-assistant-ui-v1";
+      const LLM_CONFIG_STORAGE_KEY = "qual-method-assistant-llm-v1";
+
+      const providerPresets = {
+        deepseek: {
+          adapter: "openai",
+          baseUrl: "https://api.deepseek.com",
+          model: "deepseek-v4-flash",
+          tokenParam: "max_tokens",
+          structured: "json_object",
+          hint: {
+            "zh-CN": "DeepSeek 使用 OpenAI-compatible Chat Completions。若浏览器跨域失败，请改用本地脚本。",
+            "en-US": "DeepSeek uses OpenAI-compatible Chat Completions. Use the local script if browser CORS blocks the request."
+          }
+        },
+        openai: {
+          adapter: "openai",
+          baseUrl: "https://api.openai.com/v1",
+          model: "gpt-5-mini",
+          tokenParam: "max_completion_tokens",
+          structured: "json_schema",
+          hint: {
+            "zh-CN": "OpenAI 预设使用 Chat Completions；GPT-5 系列通常使用 max_completion_tokens。",
+            "en-US": "OpenAI preset uses Chat Completions; GPT-5-family models usually use max_completion_tokens."
+          }
+        },
+        anthropic: {
+          adapter: "anthropic",
+          baseUrl: "https://api.anthropic.com",
+          model: "claude-sonnet-4-5",
+          tokenParam: "max_tokens",
+          structured: "prompt_only",
+          hint: {
+            "zh-CN": "Anthropic Messages API 在浏览器里常受 CORS 限制，推荐用本地脚本运行。",
+            "en-US": "Anthropic Messages API is often CORS-restricted in browsers; the local script is recommended."
+          }
+        },
+        aliyun: {
+          adapter: "openai",
+          baseUrl: "https://dashscope.aliyuncs.com/compatible-mode/v1",
+          model: "qwen-plus",
+          tokenParam: "max_tokens",
+          structured: "json_object",
+          hint: {
+            "zh-CN": "阿里百炼 DashScope 兼容 OpenAI 调用格式，默认走 compatible-mode/v1。",
+            "en-US": "Alibaba Model Studio / DashScope can use the OpenAI-compatible compatible-mode/v1 endpoint."
+          }
+        },
+        volcengine: {
+          adapter: "openai",
+          baseUrl: "https://ark.cn-beijing.volces.com/api/v3",
+          model: "doubao-seed-1-6",
+          tokenParam: "max_tokens",
+          structured: "json_object",
+          hint: {
+            "zh-CN": "火山方舟 Ark 兼容 OpenAI Chat Completions；模型名通常填写你的 endpoint/model id。",
+            "en-US": "Volcengine Ark is OpenAI-compatible; model is usually your endpoint or model id."
+          }
+        },
+        zhipu: {
+          adapter: "openai",
+          baseUrl: "https://open.bigmodel.cn/api/paas/v4",
+          model: "glm-4.5",
+          tokenParam: "max_tokens",
+          structured: "json_object",
+          hint: {
+            "zh-CN": "智谱 BigModel 使用 OpenAI-compatible 格式；如账号环境不同，可改 Base URL。",
+            "en-US": "Zhipu BigModel uses an OpenAI-compatible format; adjust Base URL if your account uses a different gateway."
+          }
+        },
+        custom: {
+          adapter: "openai",
+          baseUrl: "https://example.com/v1",
+          model: "your-model",
+          tokenParam: "max_tokens",
+          structured: "json_object",
+          hint: {
+            "zh-CN": "自定义服务商可填写任何 OpenAI-compatible 或 Anthropic Messages 接口。",
+            "en-US": "Custom providers can target any OpenAI-compatible or Anthropic Messages endpoint."
+          }
+        }
+      };
+
+      const i18n = {
+        "zh-CN": {
+          appTitle: "质性方法助手",
+          appSubtitle: "主题分析 · 扎根理论 · 证据链",
+          language: "语言",
+          project: "项目",
+          question: "研究问题",
+          discipline: "学科语境",
+          theoryStatus: "理论状态",
+          knownTheory: "已有理论",
+          mixedTheory: "半开放",
+          exploreTheory: "探索",
+          analysisPath: "分析路径",
+          autoPath: "自动",
+          themePath: "主题",
+          groundedPath: "扎根",
+          analyze: "分析",
+          sample: "样本",
+          clear: "清空",
+          importFile: "导入 TXT/CSV",
+          saveProject: "保存项目",
+          loadProject: "载入项目",
+          autosaveOn: "本地自动保存已开启",
+          workspace: "编码工作台",
+          waiting: "等待分析",
+          materials: "材料",
+          analysis: "分析",
+          recode: "重新编码",
+          exportCsv: "导出 CSV",
+          exportJson: "导出 JSON",
+          exportDoc: "导出 DOC",
+          copyDraft: "复制方法段",
+          tabOverview: "概览",
+          tabCoding: "编码表",
+          tabThemes: "主题",
+          tabDraft: "方法段",
+          tabRisks: "复核",
+          tabMemos: "备忘录",
+          tabAudit: "审计",
+          meaningUnits: "意义单元",
+          initialCodes: "初始编码",
+          themes: "主题",
+          needsReview: "需复核",
+          noResults: "暂无结果",
+          quote: "原文片段",
+          initialCode: "初始编码",
+          themeCategory: "主题/范畴",
+          methodNote: "方法备注",
+          researcherMemo: "研究者备忘录",
+          methodMemo: "方法备忘录",
+          researcherMemoPlaceholder: "记录你对受访者语境、反例、比较对象和理论敏感概念的判断。",
+          methodMemoPlaceholder: "记录编码规则、主题合并/拆分理由、导师反馈和答辩时需要说明的边界。",
+          auditHelp: "记录人工修改编码、主题和复核状态的轨迹，便于说明 AI 初稿如何被研究者修订。",
+          clearAudit: "清空审计",
+          llmHelp: "配置服务商后可在线编码；API Key 只保存在当前页面输入框，不写入本地项目。",
+          refreshPrompt: "刷新提示词",
+          copyPrompt: "复制提示词",
+          provider: "服务商",
+          adapter: "接口格式",
+          model: "模型",
+          apiKeyPlaceholder: "不会保存到项目",
+          batchSize: "每批片段数",
+          delayMs: "批次间隔 ms",
+          rpm: "每分钟请求上限",
+          maxTokens: "最大输出 tokens",
+          tokenParam: "输出 token 参数",
+          structuredOutput: "结构化输出",
+          contextMode: "上下文模式",
+          contextLean: "省 tokens",
+          contextRich: "完整语境",
+          systemPrompt: "系统提示词",
+          systemPromptPlaceholder: "默认使用社科质性编码助手提示词",
+          runOnlineCoding: "在线 LLM 编码",
+          applyLlmResults: "应用 LLM 结果",
+          downloadLlmConfig: "下载本地脚本配置",
+          llmIdle: "LLM 待运行",
+          llmResultPlaceholder: "LLM 返回的 JSON 会显示在这里",
+          review: "需复核",
+          noCoding: "暂无编码。导入材料后点击分析。",
+          noTheme: "暂无主题",
+          noAudit: "暂无人工修改记录",
+          promptCopied: "LLM 提示词已复制",
+          promptRefreshed: "提示词已刷新",
+          configDownloaded: "本地脚本配置已下载",
+          missingKey: "请先填写 API Key。",
+          noMaterial: "没有可编码的材料。",
+          corsTip: "请求失败。若是浏览器跨域或服务商禁止前端调用，请使用本地脚本。",
+          llmDone: "LLM 编码完成",
+          llmApplied: "已应用 LLM 结果",
+          invalidJson: "没有识别到可应用的 JSON 结果。",
+          languageChanged: "语言已切换",
+          batchProgress: "批次",
+          requestWaiting: "等待速率限制"
+        },
+        "en-US": {
+          appTitle: "Qual Method Assistant",
+          appSubtitle: "Thematic analysis · Grounded theory · Evidence chain",
+          language: "Language",
+          project: "Project",
+          question: "Research Question",
+          discipline: "Discipline Context",
+          theoryStatus: "Theory Status",
+          knownTheory: "Known",
+          mixedTheory: "Mixed",
+          exploreTheory: "Explore",
+          analysisPath: "Analysis Path",
+          autoPath: "Auto",
+          themePath: "Theme",
+          groundedPath: "Grounded",
+          analyze: "Analyze",
+          sample: "Sample",
+          clear: "Clear",
+          importFile: "Import TXT/CSV",
+          saveProject: "Save Project",
+          loadProject: "Load Project",
+          autosaveOn: "Local autosave is on",
+          workspace: "Coding Workspace",
+          waiting: "Waiting for analysis",
+          materials: "Materials",
+          analysis: "Analysis",
+          recode: "Recode",
+          exportCsv: "Export CSV",
+          exportJson: "Export JSON",
+          exportDoc: "Export DOC",
+          copyDraft: "Copy Method",
+          tabOverview: "Overview",
+          tabCoding: "Coding",
+          tabThemes: "Themes",
+          tabDraft: "Method",
+          tabRisks: "Review",
+          tabMemos: "Memos",
+          tabAudit: "Audit",
+          meaningUnits: "Meaning Units",
+          initialCodes: "Initial Codes",
+          themes: "Themes",
+          needsReview: "Needs Review",
+          noResults: "No results yet",
+          quote: "Source Quote",
+          initialCode: "Initial Code",
+          themeCategory: "Theme/Category",
+          methodNote: "Method Note",
+          researcherMemo: "Researcher Memo",
+          methodMemo: "Method Memo",
+          researcherMemoPlaceholder: "Record context, deviant cases, comparisons, and theoretical sensitivities.",
+          methodMemoPlaceholder: "Record coding rules, theme merge/split reasons, advisor feedback, and defense boundaries.",
+          auditHelp: "Tracks manual edits to codes, themes, and review status so the researcher can explain how AI drafts were revised.",
+          clearAudit: "Clear Audit",
+          llmHelp: "Configure a provider to run online coding. The API key stays in this input and is not saved into the project.",
+          refreshPrompt: "Refresh Prompt",
+          copyPrompt: "Copy Prompt",
+          provider: "Provider",
+          adapter: "API Format",
+          model: "Model",
+          apiKeyPlaceholder: "Not saved to project",
+          batchSize: "Units per Batch",
+          delayMs: "Delay ms",
+          rpm: "RPM Limit",
+          maxTokens: "Max Output Tokens",
+          tokenParam: "Token Parameter",
+          structuredOutput: "Structured Output",
+          contextMode: "Context Mode",
+          contextLean: "Token saver",
+          contextRich: "Full context",
+          systemPrompt: "System Prompt",
+          systemPromptPlaceholder: "Use the default qualitative coding assistant prompt",
+          runOnlineCoding: "Run Online Coding",
+          applyLlmResults: "Apply LLM Results",
+          downloadLlmConfig: "Download Local Config",
+          llmIdle: "LLM idle",
+          llmResultPlaceholder: "LLM JSON response will appear here",
+          review: "Needs review",
+          noCoding: "No coding yet. Import materials and click Analyze.",
+          noTheme: "No themes yet",
+          noAudit: "No manual edit history yet",
+          promptCopied: "LLM prompt copied",
+          promptRefreshed: "Prompt refreshed",
+          configDownloaded: "Local script config downloaded",
+          missingKey: "Enter an API key first.",
+          noMaterial: "No material to code.",
+          corsTip: "Request failed. If this is a browser CORS issue or provider-side frontend block, use the local script.",
+          llmDone: "LLM coding completed",
+          llmApplied: "LLM results applied",
+          invalidJson: "No applicable JSON result was detected.",
+          languageChanged: "Language switched",
+          batchProgress: "Batch",
+          requestWaiting: "Waiting for rate limit"
+        }
+      };
+
+      const q = id => document.getElementById(id);
+      const llmEls = {
+        language: q("languageSelect"),
+        provider: q("providerSelect"),
+        adapter: q("adapterSelect"),
+        model: q("modelInput"),
+        baseUrl: q("baseUrlInput"),
+        apiKey: q("apiKeyInput"),
+        batchSize: q("batchSizeInput"),
+        delay: q("delayInput"),
+        rpm: q("rpmInput"),
+        maxTokens: q("maxTokensInput"),
+        temperature: q("temperatureInput"),
+        tokenParam: q("tokenParamSelect"),
+        structured: q("structuredSelect"),
+        contextMode: q("contextModeSelect"),
+        systemPrompt: q("systemPromptInput"),
+        providerHint: q("providerHint"),
+        progress: q("llmProgress"),
+        result: q("llmResult")
+      };
+
+      const baseBuildLlmPrompt = buildLlmPrompt;
+      const baseSerializeProject = serializeProject;
+      const baseHydrateProject = hydrateProject;
+      const baseRenderCodingRows = renderCodingRows;
+      const baseRenderThemes = renderThemes;
+      const baseRenderAudit = renderAudit;
+
+      state.language = state.language || "zh-CN";
+      state.llmResults = [];
+
+      function tr(key) {
+        return i18n[state.language]?.[key] || i18n["zh-CN"][key] || key;
+      }
+
+      function applyLanguage(silent = false) {
+        document.documentElement.lang = state.language;
+        if (llmEls.language) llmEls.language.value = state.language;
+        document.querySelectorAll("[data-i18n]").forEach(node => {
+          node.textContent = tr(node.dataset.i18n);
+        });
+        document.querySelectorAll("[data-i18n-placeholder]").forEach(node => {
+          node.placeholder = tr(node.dataset.i18nPlaceholder);
+        });
+        document.querySelectorAll("[data-i18n-title]").forEach(node => {
+          node.title = tr(node.dataset.i18nTitle);
+        });
+        updateProviderHint();
+        if (!silent) showStatus(tr("languageChanged"));
+      }
+
+      function getLlmConfig(includeKey = true) {
+        return {
+          provider: llmEls.provider.value,
+          adapter: llmEls.adapter.value,
+          baseUrl: llmEls.baseUrl.value.trim(),
+          model: llmEls.model.value.trim(),
+          apiKey: includeKey ? llmEls.apiKey.value.trim() : "",
+          batchSize: Math.max(1, Number(llmEls.batchSize.value) || 1),
+          delayMs: Math.max(0, Number(llmEls.delay.value) || 0),
+          rpm: Math.max(0, Number(llmEls.rpm.value) || 0),
+          maxTokens: Math.max(128, Number(llmEls.maxTokens.value) || 1200),
+          temperature: Number(llmEls.temperature.value || 0.2),
+          tokenParam: llmEls.tokenParam.value,
+          structured: llmEls.structured.value,
+          contextMode: llmEls.contextMode.value,
+          systemPrompt: llmEls.systemPrompt.value.trim()
+        };
+      }
+
+      function setLlmConfig(config = {}) {
+        if (config.provider && llmEls.provider) llmEls.provider.value = config.provider;
+        const preset = providerPresets[llmEls.provider.value] || providerPresets.custom;
+        llmEls.adapter.value = config.adapter || preset.adapter;
+        llmEls.baseUrl.value = config.baseUrl || preset.baseUrl;
+        llmEls.model.value = config.model || preset.model;
+        llmEls.batchSize.value = config.batchSize || 8;
+        llmEls.delay.value = config.delayMs ?? 1200;
+        llmEls.rpm.value = config.rpm ?? 30;
+        llmEls.maxTokens.value = config.maxTokens || 1200;
+        llmEls.temperature.value = config.temperature ?? 0.2;
+        llmEls.tokenParam.value = config.tokenParam || preset.tokenParam;
+        llmEls.structured.value = config.structured || preset.structured;
+        llmEls.contextMode.value = config.contextMode || "lean";
+        llmEls.systemPrompt.value = config.systemPrompt || "";
+        updateProviderHint();
+        renderDerived();
+      }
+
+      function updateProviderHint() {
+        const preset = providerPresets[llmEls.provider?.value] || providerPresets.custom;
+        if (llmEls.providerHint) llmEls.providerHint.textContent = preset.hint[state.language] || preset.hint["zh-CN"];
+      }
+
+      function saveLlmConfig() {
+        localStorage.setItem(LLM_CONFIG_STORAGE_KEY, JSON.stringify(getLlmConfig(false)));
+      }
+
+      function loadLlmConfig() {
+        const saved = localStorage.getItem(LLM_CONFIG_STORAGE_KEY);
+        setLlmConfig(saved ? JSON.parse(saved) : { provider: "deepseek" });
+      }
+
+      function getRowsForLlm() {
+        if (state.rows.length) return state.rows;
+        return splitUnits(els.sourceText.value).map((quote, index) => normalizeRow({ id: index + 1, quote }, index));
+      }
+
+      function jsonSchema() {
+        return {
+          type: "object",
+          additionalProperties: false,
+          required: ["rows"],
+          properties: {
+            rows: {
+              type: "array",
+              items: {
+                type: "object",
+                additionalProperties: false,
+                required: ["id", "quote", "code", "theme", "note", "needs_review"],
+                properties: {
+                  id: { type: "integer" },
+                  quote: { type: "string" },
+                  code: { type: "string" },
+                  theme: { type: "string" },
+                  note: { type: "string" },
+                  needs_review: { type: "boolean" }
+                }
+              }
+            }
+          }
+        };
+      }
+
+      function defaultSystemPrompt() {
+        if (state.language === "en-US") {
+          return "You are a social-science qualitative research methods assistant. Help code interview or open-ended response materials. Preserve evidence, avoid inventing sources or background, and return only valid JSON when asked.";
+        }
+        return "你是一名社会科学质性研究方法助手。请帮助研究者编码访谈或开放题材料，保留证据链，不编造文献、背景或受访者信息；要求 JSON 时只返回合法 JSON。";
+      }
+
+      function buildBatchPrompt(rows, config = getLlmConfig(false)) {
+        const lean = config.contextMode === "lean";
+        const payload = {
+          project: els.project.value.trim(),
+          discipline: els.discipline.value,
+          question: els.question.value.trim(),
+          theory_mode: labelForMode(state.theoryMode),
+          method_mode: state.method?.name || labelForMode(state.methodMode),
+          output_language: state.language === "en-US" ? "English" : "中文",
+          rows: rows.map(row => ({
+            id: row.id,
+            quote: row.quote,
+            current_code: lean ? undefined : row.code,
+            current_theme: lean ? undefined : row.theme,
+            current_note: lean ? undefined : row.note
+          }))
+        };
+        const task = state.language === "en-US"
+          ? "Code these qualitative meaning units. Return JSON only with {\"rows\":[{\"id\":number,\"quote\":string,\"code\":string,\"theme\":string,\"note\":string,\"needs_review\":boolean}]}. Keep codes concise, themes methodologically defensible, and mark uncertain or context-thin units as needs_review."
+          : "请为这些质性材料意义单元编码。只返回 JSON，格式为 {\"rows\":[{\"id\":数字,\"quote\":\"原文\",\"code\":\"初始编码\",\"theme\":\"主题/范畴\",\"note\":\"方法备注\",\"needs_review\":布尔值}]}。编码要简洁，主题要有方法依据；语境不足或不确定的片段标记 needs_review=true。";
+        return `${task}\n\n${JSON.stringify(payload, null, 2)}`;
+      }
+
+      buildLlmPrompt = function(rows = null, config = getLlmConfig(false)) {
+        const targetRows = rows || getRowsForLlm().slice(0, Math.max(1, Number(llmEls.batchSize.value) || 8));
+        const header = state.language === "en-US"
+          ? "Preview prompt for the next LLM coding batch:"
+          : "下一批 LLM 编码提示词预览：";
+        return `${header}\n\nSystem:\n${config.systemPrompt || defaultSystemPrompt()}\n\nUser:\n${buildBatchPrompt(targetRows, config)}`;
+      };
+
+      renderCodingRows = function() {
+        els.codingRows.innerHTML = state.rows.map(row => `
+          <tr>
+            <td>${escapeHtml(row.quote)}</td>
+            <td><textarea data-id="${row.id}" data-field="code">${escapeHtml(row.code)}</textarea></td>
+            <td><textarea data-id="${row.id}" data-field="theme">${escapeHtml(row.theme)}</textarea></td>
+            <td>
+              <label class="checkline">
+                <input type="checkbox" data-id="${row.id}" data-field="review" ${row.review ? "checked" : ""}>
+                ${escapeHtml(tr("review"))}
+              </label>
+              <textarea data-id="${row.id}" data-field="note">${escapeHtml(row.note)}</textarea>
+            </td>
+          </tr>
+        `).join("") || `<tr><td colspan="4"><div class="empty">${escapeHtml(tr("noCoding"))}</div></td></tr>`;
+      };
+
+      renderThemes = function() {
+        els.themeGrid.innerHTML = state.themes.map(theme => `
+          <div class="theme">
+            <h4>${escapeHtml(theme.name)}</h4>
+            <ul>${theme.items.slice(0, 4).map(row => `<li>${escapeHtml(row.code)}：${escapeHtml(row.meaning)}</li>`).join("")}</ul>
+          </div>
+        `).join("") || `<div class="empty">${escapeHtml(tr("noTheme"))}</div>`;
+      };
+
+      renderAudit = function() {
+        els.auditList.innerHTML = state.history.map(item => `
+          <div class="audit-item">
+            <b>${escapeHtml(formatTime(item.at))} · ${state.language === "en-US" ? "Unit" : "片段"} ${escapeHtml(item.rowId)} · ${escapeHtml(FIELD_LABELS[item.field] || item.field)}</b>
+            <div>${escapeHtml(item.quote || "")}</div>
+            <div class="audit-change">
+              <span>${state.language === "en-US" ? "Before" : "修改前"}：${escapeHtml(formatAuditValue(item.before))}</span>
+              <span>${state.language === "en-US" ? "After" : "修改后"}：${escapeHtml(formatAuditValue(item.after))}</span>
+            </div>
+          </div>
+        `).join("") || `<div class="empty">${escapeHtml(tr("noAudit"))}</div>`;
+      };
+
+      serializeProject = function() {
+        const project = baseSerializeProject();
+        project.language = state.language;
+        project.llm = getLlmConfig(false);
+        return project;
+      };
+
+      hydrateProject = function(project) {
+        baseHydrateProject(project);
+        if (project?.language) {
+          state.language = project.language;
+          applyLanguage(true);
+        }
+        if (project?.llm) setLlmConfig(project.llm);
+      };
+
+      function requestUrl(baseUrl, adapter) {
+        const clean = baseUrl.replace(/\/+$/, "");
+        if (/\/(chat\/completions|messages)$/.test(clean)) return clean;
+        return adapter === "anthropic" ? `${clean}/v1/messages` : `${clean}/chat/completions`;
+      }
+
+      function openAiBody(config, prompt) {
+        const body = {
+          model: config.model,
+          messages: [
+            { role: "system", content: config.systemPrompt || defaultSystemPrompt() },
+            { role: "user", content: prompt }
+          ],
+          temperature: config.temperature
+        };
+        body[config.tokenParam || "max_tokens"] = config.maxTokens;
+        if (config.structured === "json_object") body.response_format = { type: "json_object" };
+        if (config.structured === "json_schema") {
+          body.response_format = {
+            type: "json_schema",
+            json_schema: {
+              name: "qualitative_coding_batch",
+              strict: true,
+              schema: jsonSchema()
+            }
+          };
+        }
+        return body;
+      }
+
+      async function callProvider(config, prompt) {
+        if (config.adapter === "anthropic") {
+          const response = await fetch(requestUrl(config.baseUrl, config.adapter), {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-api-key": config.apiKey,
+              "anthropic-version": "2023-06-01"
+            },
+            body: JSON.stringify({
+              model: config.model,
+              max_tokens: config.maxTokens,
+              temperature: config.temperature,
+              system: config.systemPrompt || defaultSystemPrompt(),
+              messages: [{ role: "user", content: prompt }]
+            })
+          });
+          const json = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(json.error?.message || response.statusText);
+          return (json.content || []).map(part => part.text || "").join("\n");
+        }
+
+        const response = await fetch(requestUrl(config.baseUrl, config.adapter), {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${config.apiKey}`
+          },
+          body: JSON.stringify(openAiBody(config, prompt))
+        });
+        const json = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(json.error?.message || response.statusText);
+        return json.choices?.[0]?.message?.content || "";
+      }
+
+      function parseLlmJson(text) {
+        const cleaned = String(text || "").replace(/```json|```/g, "").trim();
+        const direct = tryJson(cleaned);
+        if (direct) return Array.isArray(direct) ? direct : direct.rows || direct.data || [];
+        const startObj = cleaned.indexOf("{");
+        const endObj = cleaned.lastIndexOf("}");
+        if (startObj >= 0 && endObj > startObj) {
+          const obj = tryJson(cleaned.slice(startObj, endObj + 1));
+          if (obj) return Array.isArray(obj) ? obj : obj.rows || obj.data || [];
+        }
+        const startArr = cleaned.indexOf("[");
+        const endArr = cleaned.lastIndexOf("]");
+        if (startArr >= 0 && endArr > startArr) {
+          const arr = tryJson(cleaned.slice(startArr, endArr + 1));
+          if (arr) return Array.isArray(arr) ? arr : arr.rows || arr.data || [];
+        }
+        return [];
+      }
+
+      function tryJson(text) {
+        try { return JSON.parse(text); } catch { return null; }
+      }
+
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      function chunk(items, size) {
+        const chunks = [];
+        for (let index = 0; index < items.length; index += size) chunks.push(items.slice(index, index + size));
+        return chunks;
+      }
+
+      async function runOnlineCoding() {
+        const config = getLlmConfig(true);
+        saveLlmConfig();
+        if (!config.apiKey) {
+          showStatus(tr("missingKey"));
+          return;
+        }
+        const rows = getRowsForLlm();
+        if (!rows.length) {
+          showStatus(tr("noMaterial"));
+          return;
+        }
+        if (!state.rows.length) {
+          state.rows = rows;
+          state.method = recommendMethod(rows.map(row => row.quote));
+          rebuildThemes();
+        }
+        const batches = chunk(rows, config.batchSize);
+        const outputs = [];
+        const parsedRows = [];
+        const minInterval = config.rpm > 0 ? Math.ceil(60000 / config.rpm) : 0;
+        const pause = Math.max(config.delayMs, minInterval);
+
+        try {
+          q("runLlmBtn").disabled = true;
+          for (let index = 0; index < batches.length; index += 1) {
+            llmEls.progress.textContent = `${tr("batchProgress")} ${index + 1}/${batches.length}`;
+            const prompt = buildBatchPrompt(batches[index], config);
+            const text = await callProvider(config, prompt);
+            outputs.push(text);
+            parsedRows.push(...parseLlmJson(text));
+            llmEls.result.value = JSON.stringify({ rows: parsedRows, raw: outputs }, null, 2);
+            if (index < batches.length - 1 && pause > 0) {
+              llmEls.progress.textContent = `${tr("requestWaiting")} ${pause}ms`;
+              await sleep(pause);
+            }
+          }
+          state.llmResults = parsedRows;
+          llmEls.progress.textContent = `${tr("llmDone")} · ${parsedRows.length} rows`;
+          showStatus(tr("llmDone"));
+        } catch (error) {
+          llmEls.progress.textContent = `${tr("corsTip")} ${error.message}`;
+          showStatus(tr("corsTip"));
+        } finally {
+          q("runLlmBtn").disabled = false;
+        }
+      }
+
+      function applyLlmResults() {
+        const rows = parseLlmJson(llmEls.result.value);
+        if (!rows.length) {
+          showStatus(tr("invalidJson"));
+          return;
+        }
+        rows.forEach(item => {
+          const row = state.rows.find(existing => existing.id === Number(item.id)) || state.rows.find(existing => existing.quote === item.quote);
+          if (!row) return;
+          [
+            ["code", item.code],
+            ["theme", item.theme],
+            ["note", item.note],
+            ["review", Boolean(item.needs_review ?? item.review)]
+          ].forEach(([field, value]) => {
+            if (value === undefined || value === null || value === "") return;
+            const before = row[field];
+            row[field] = value;
+            recordAudit(row, field, before, value);
+          });
+        });
+        rebuildThemes();
+        render("coding");
+        scheduleAutoSave();
+        showStatus(tr("llmApplied"));
+      }
+
+      function downloadLlmConfig() {
+        const config = {
+          ...getLlmConfig(false),
+          input: "project.json",
+          output: "llm-coded-project.json",
+          env: "LLM_API_KEY"
+        };
+        download(`${safeFileName(els.project.value)}-llm-config.json`, JSON.stringify(config, null, 2), "application/json;charset=utf-8");
+        showStatus(tr("configDownloaded"));
+      }
+
+      function bindLlmEvents() {
+        ["refreshPromptBtn", "copyPromptBtn"].forEach(id => {
+          const node = q(id);
+          const clone = node.cloneNode(true);
+          node.replaceWith(clone);
+        });
+        llmEls.language.addEventListener("change", () => {
+          state.language = llmEls.language.value;
+          localStorage.setItem(UI_STORAGE_KEY, JSON.stringify({ language: state.language }));
+          applyLanguage(false);
+          render(getActiveTab());
+          scheduleAutoSave();
+        });
+        llmEls.provider.addEventListener("change", () => {
+          setLlmConfig({ provider: llmEls.provider.value });
+          saveLlmConfig();
+        });
+        [llmEls.adapter, llmEls.baseUrl, llmEls.model, llmEls.batchSize, llmEls.delay, llmEls.rpm, llmEls.maxTokens, llmEls.temperature, llmEls.tokenParam, llmEls.structured, llmEls.contextMode, llmEls.systemPrompt].forEach(input => {
+          input.addEventListener("input", () => {
+            saveLlmConfig();
+            renderDerived();
+          });
+          input.addEventListener("change", () => {
+            saveLlmConfig();
+            renderDerived();
+          });
+        });
+        q("runLlmBtn").addEventListener("click", runOnlineCoding);
+        q("applyLlmBtn").addEventListener("click", applyLlmResults);
+        q("downloadLlmConfigBtn").addEventListener("click", downloadLlmConfig);
+        q("refreshPromptBtn").addEventListener("click", () => {
+          els.llmPrompt.value = buildLlmPrompt();
+          showStatus(tr("promptRefreshed"));
+        });
+        q("copyPromptBtn").addEventListener("click", () => {
+          els.llmPrompt.value = buildLlmPrompt();
+          copyText(els.llmPrompt.value, tr("promptCopied"));
+        });
+      }
+
+      const uiSaved = tryJson(localStorage.getItem(UI_STORAGE_KEY) || "{}");
+      if (uiSaved?.language) state.language = uiSaved.language;
+      loadLlmConfig();
+      bindLlmEvents();
+      applyLanguage(true);
+      render(getActiveTab());
+    })();
   </script>
 </body>
 </html>
